@@ -19,7 +19,7 @@ class Adsl(object):
 
         with open('ip.txt', 'r') as f:
             for line in f:
-                self.ip_pool.add(line)
+                self.ip_pool.add(line.strip())
 
     # ==============================================================================
     # set_adsl : 修改adsl设置
@@ -59,14 +59,14 @@ class Adsl(object):
         return myaddr
 
     def dial(self):
-        self.connect()
+        self.reconnect()
         with open("ip.txt", 'a') as fw:
             cur_ip = self.getip()
             while (cur_ip in self.ip_pool):
                 self.reconnect()
                 cur_ip = self.getip()
             self.ip_pool.add(cur_ip)
-            fw.write(cur_ip)
+            fw.write(cur_ip+'\n')
 
 if __name__ == "__main__":
     adsl = Adsl()

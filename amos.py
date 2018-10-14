@@ -45,24 +45,32 @@ class Amos:
 
 if __name__ == "__main__":
     import xlrd
+    import configparser
     from dial_adsl import Adsl
 
-    adsl = Adsl("adsl_username", "adsl password")
+    cf = configparser.ConfigParser()
+    cf.read('config.ini')
 
+    username = cf.get('adsl', 'username')
+    password = cf.get('adsl', 'password')
+    print(username, password)
+    adsl = Adsl(username, password)
 
-    input_file = "资料.xlsx"
+    input_file = cf.get('input', 'file')
     book = xlrd.open_workbook(input_file)
-    sheet = book.sheet_by_index(1)
+    sheet = book.sheet_by_index(0)
+    print(sheet.name)
 
-    for row_index in xrange(2, sheet.nrows):
+    for row_index in range(1, sheet.nrows):
         driver = webdriver.Chrome()
 
-        wallet = sheet.cell(row_index, 1).value
-        email  = sheet.cell(row_index, 2).value
+        wallet = sheet.cell(row_index, 0).value
+        email  = sheet.cell(row_index, 1).value
+        input_para = {}
         input_para['Eth Wallet address 錢包地址 '] = wallet
         input_para['Email'] = email
 
-        with open('result.txt', 'w+') as fw:
+        with open('result.txt', 'a') as fw:
             try:
                 shop = Amos(driver, input_para)
                 # shop.auto_process()
@@ -73,6 +81,6 @@ if __name__ == "__main__":
             finally:
                 driver.quit()
 
-        adsl.dial()
+        # adsl.dial()
 
 
