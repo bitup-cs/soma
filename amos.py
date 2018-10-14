@@ -73,14 +73,16 @@ if __name__ == "__main__":
         with open('result.txt', 'a') as fw:
             try:
                 shop = Amos(driver, input_para)
-                # shop.auto_process()
+                shop.auto_process()
             except:
                 fw.write("ERROR: " + wallet + ',  ' + email+'\n')
+                print("ERROR: " + wallet + ',  ' + email+'\n')
             else:
                 fw.write("SUCCE: " + wallet + ',  ' + email+'\n')
+                print("SUCCE: " + wallet + ',  ' + email+'\n')
             finally:
                 driver.quit()
 
-        # adsl.dial()
+        adsl.dial()
 
 
