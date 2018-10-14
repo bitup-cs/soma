@@ -1,7 +1,6 @@
 import os
 import time
 import socket
-import json
 
 g_adsl_account = {"name": "adsl",
                   "username": "08527385031",
@@ -16,6 +15,11 @@ class Adsl(object):
         self.name = 'adsl'
         self.username = username
         self.password = password
+        self.ip_pool = set()
+
+        with open('ip.txt', 'r') as f:
+            for line in f:
+                self.ip_pool.add(line)
 
     # ==============================================================================
     # set_adsl : 修改adsl设置
@@ -55,21 +59,14 @@ class Adsl(object):
         return myaddr
 
     def dial(self):
-        ips = {}
         self.connect()
-        with open("ip.json", 'r+') as f:
-            ips = json.load(f)
+        with open("ip.txt", 'a') as fw:
             cur_ip = self.getip()
-            while cur_ip in ips.keys():
-                ips[cur_ip] += 1
+            while (cur_ip in self.ip_pool):
                 self.reconnect()
                 cur_ip = self.getip()
-            ips[cur_ip] = 1
-
-        with open("ip.json", 'w') as fw:
-            json.dump(ips, fw, indent= 4)
-
-
+            self.ip_pool.add(cur_ip)
+            fw.write(cur_ip)
 
 if __name__ == "__main__":
     adsl = Adsl()
